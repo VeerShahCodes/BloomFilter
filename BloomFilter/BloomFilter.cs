@@ -5,7 +5,7 @@ namespace BloomFilter
     public class BloomFilter<T>
     {
         bool[] booleans;
-        HashSet<Func<T, int>> hashSet;
+        public HashSet<Func<T, int>> hashSet;
         public BloomFilter(int cap)
         {
             booleans = new bool[cap];
@@ -25,9 +25,9 @@ namespace BloomFilter
             int index = 0;
             foreach(var func in hashSet)
             {
-                index = func(item);
+                index = Math.Abs(func(item) % booleans.Length);
+                booleans[index] = true;
             }
-            booleans[index] = true;
         }
 
         public bool ProbablyContains(T item)
@@ -35,9 +35,9 @@ namespace BloomFilter
             int index = 0;
             foreach (var func in hashSet)
             {
-                index = func(item);
+                index = Math.Abs(func(item) % booleans.Length);
+                if (booleans[index] == false) return false;
             }
-            if (booleans[index] == false) return false;
             return true;
         }
 
